@@ -1,0 +1,14 @@
+{
+  "name": "color-eye-dropper",
+  "version": "0.0.1",
+  "description": "React components that helps picking out a color from a specified DOM node",
+  "main": "index.js",
+  "author": "tomeraz",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^15.3.2"
+  },
+  "devDependencies": {
+    "express": "^4.14.0"
+  }
+}
