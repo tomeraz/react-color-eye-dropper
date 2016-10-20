@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "tomeraz",
   "license": "MIT",
+  "scripts": {
+    "start": "node devServer.js"
+  },
   "dependencies": {
     "dom-to-image": "^2.5.2",
     "react": "^15.3.2",
