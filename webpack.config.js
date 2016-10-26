@@ -1,4 +1,8 @@
 const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+
 const relpath = path.join.bind(path, __dirname)
 
 const NPM_EVENT = process.env.npm_lifecycle_event
@@ -25,11 +29,29 @@ function getSourceMap() {
 function getEntryPoints() {
   return isDevelopmentServer ?
   [
-    'eventsource-polyfill', // necessary for hot reloading with IE
     'webpack-hot-middleware/client',
     paths.appEntry
   ] :
   [paths.appEntry]
+}
+
+function getPlugins() {
+  let plugins = [
+    new CleanWebpackPlugin(paths.dist),
+    new webpack.NoErrorsPlugin(),
+    new HtmlWebpackPlugin({
+      template: 'html!' + paths.indexHtml,
+      inject: true
+    })
+  ]
+
+  if (isDevelopmentServer) {
+    plugins = plugins.concat([
+      new webpack.HotModuleReplacementPlugin()
+    ])
+  }
+
+  return plugins
 }
 
 module.exports ={
@@ -40,6 +62,7 @@ module.exports ={
     path: paths.dist,
     filename: 'index.js'
   },
+  plugins: getPlugins(),
   module: {
     loaders: [
       {
