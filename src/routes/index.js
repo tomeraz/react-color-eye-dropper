@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import App from './App'
 import About from './About'
 import Welcome from './Welcome'
@@ -8,10 +8,10 @@ export default {
   path: '/',
   component: App,
   indexRoute: {
-    component: Welcome
+    component: Welcome,
   },
   childRoutes: [
-    {path: 'about', component: About},
-    {path: 'help', component: Help},
-  ]
+    { path: 'about', component: About },
+    { path: 'help', component: Help },
+  ],
 }

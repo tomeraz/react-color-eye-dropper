@@ -1,12 +1,12 @@
-import React, {Component} from 'react'
-import CSSModules from 'react-css-modules'
+import React, { Component } from 'react'
+import cssModules from 'react-css-modules'
 import styles from './App.scss'
 
-@CSSModules(styles)
+@cssModules(styles)
 export default class App extends Component {
-  render () {
+  render() {
     return (
-      <div styleName='title'>
+      <div styleName="title">
         App
       </div>
     )

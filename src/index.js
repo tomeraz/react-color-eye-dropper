@@ -1,10 +1,13 @@
-import React from 'react'
-import {render} from 'react-dom'
+import React, { PropTypes } from 'react'
+import { render } from 'react-dom'
 import App from './routes/App'
 
 class Wrap extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+  }
 
-  render(){
+  render() {
     return this.props.children
   }
 }
