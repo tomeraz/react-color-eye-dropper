@@ -138,7 +138,15 @@ module.exports ={
             }
           }
         ]
-      }
+      },
+      {
+        test: /\.json/,
+        use: [
+          {
+            loader: 'json-loader',
+          },
+        ],
+      },
       // {
       //   test: /\.s?css/,
       //   use: [
