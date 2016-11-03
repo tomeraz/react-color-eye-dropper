@@ -32,6 +32,7 @@ function getSourceMap() {
 function getEntryPoints() {
   return isDevelopmentServer ?
   [
+    'react-hot-loader/patch',
     'webpack-hot-middleware/client',
     paths.appEntry
   ] :
