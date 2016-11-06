@@ -17,7 +17,7 @@ const paths = {
   dist: relpath(`./dist/${NODE_ENV}`),
   appEntry: relpath('./src/index'),
   indexHtml: relpath('./src/index.html'),
-  src: relpath('./src')
+  src: relpath('./src'),
 }
 
 function getSourceMap() {
@@ -34,7 +34,7 @@ function getEntryPoints() {
   [
     'react-hot-loader/patch',
     'webpack-hot-middleware/client',
-    paths.appEntry
+    paths.appEntry,
   ] :
   [paths.appEntry]
 }
@@ -44,18 +44,82 @@ function getPlugins() {
     new CleanWebpackPlugin(paths.dist),
     new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
-      template: 'html!' + paths.indexHtml,
-      inject: true
-    })
+      template: `html!${paths.indexHtml}`,
+      inject: true,
+    }),
+    new webpack.LoaderOptionsPlugin({
+      test: /\.s?css/,
+      debug: true,
+      options: {
+        postcss: [],
+        context: path.join(__dirname, 'src'),
+        output: {
+          path: path.join(__dirname, 'dist'),
+        },
+      },
+    }),
   ]
 
   if (isDevelopmentServer) {
     plugins = plugins.concat([
-      new webpack.HotModuleReplacementPlugin()
+      new webpack.HotModuleReplacementPlugin(),
     ])
   }
 
   return plugins
+}
+
+function getModuleRules() {
+  return {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        include: paths.src,
+        use: {
+          loader: 'babel',
+        },
+      },
+      {
+        test: /\.s?css/,
+        use: [
+          {
+            loader: 'style-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+              localIdentName: '[path]_[name]_[local]_[hash:base64:5]',
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.json/,
+        use: [
+          {
+            loader: 'json-loader',
+          },
+        ],
+      },
+    ],
+  }
 }
 
 function getStyleLoaders() {
@@ -67,16 +131,16 @@ function getStyleLoaders() {
           loader: 'css-loader',
           options: {
             modules: true,
-            importLoaders: true
-          }
+            importLoaders: true,
+          },
         },
         {
-          loader: 'postcss-loader'
+          loader: 'postcss-loader',
         },
         {
-          loader: 'sass-loader'
-        }
-      ]
+          loader: 'sass-loader',
+        },
+      ],
     })
   } else { // !isProductionCode
     return [
@@ -91,93 +155,14 @@ function getStyleLoaders() {
     // : ['style?sourceMap', 'css?modules&importLoaders=1&localIdentName=[path]_[name]_[local]_[hash:base64:5]', 'postcss?sourceMap', 'sass?sourceMap'].join('!')
 }
 
-module.exports ={
+module.exports = {
   devtool: getSourceMap(),
   bail: !isDevelopmentServer,
   entry: getEntryPoints(),
   output: {
     path: paths.dist,
-    filename: 'index.js'
+    filename: 'index.js',
   },
   plugins: getPlugins(),
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        include: paths.src,
-        use: {
-          loader: 'babel'
-        }
-      },
-      {
-        test: /\.s?css/,
-        use: [
-          {
-            loader: 'style-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-              localIdentName: '[path]_[name]_[local]_[hash:base64:5]'
-            }
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.json/,
-        use: [
-          {
-            loader: 'json-loader',
-          },
-        ],
-      },
-      // {
-      //   test: /\.s?css/,
-      //   use: [
-      //     {
-      //       loader: 'postcss-loader',
-      //       options: {
-      //         plugins: () => [
-      //           autoprefixer({
-      //             browsers: ['last 2 versions']
-      //           })
-      //         ]
-      //       }
-      //     },
-      //     'sass-loader'
-      //   ]
-      // }
-    ],
-    loaders: [
-      {
-      //   test: /\.jsx?$/,
-      //   loaders: ['babel'],
-      //   include: paths.src
-      // }, {
-        // test: /\.css$/,
-        // loader: "style-loader!css-loader"
-      // }, {
-        // test: /\.s?css/,
-      //   loader: getStyleLoaders(),
-      //   include: paths.src
-      }
-    ]
-  }
+  module: getModuleRules(),
 }
